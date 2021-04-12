@@ -18,7 +18,7 @@ def crear_masterdark(imagenes, nombre_dark="MasterDark.fits",
         Nombre de la imagen de salida que va a tener el cuadro de dark combinado.
 
     nombre_bias: string, opcional
-        Nombre de la imagen de salida que va a tener el cuadro de bias combinado.
+        Nombre de la imagen que tiene el cuadro de bias combinado.
 
     directorio_entrada: string, opcional
         Directorio donde están las imágenes tomadas por el telescopio.
