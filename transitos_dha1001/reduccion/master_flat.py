@@ -68,3 +68,5 @@ def crear_masterflat(imagenes, nombre_flat="MasterFlat.fits",
 
     #Guardamos el flat.
     fits.writeto("{}/{}".format(directorio_salida, nombre_flat), master_flat, overwrite=True)
+
+    return
