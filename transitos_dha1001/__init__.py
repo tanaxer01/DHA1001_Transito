@@ -7,4 +7,5 @@ from .reduccion.master_dark import crear_masterflat
 from .reduccion.science import reducir_imagenes_ciencia
 
 from .fotometria.dao import dao_busqueda, dao_recentrar
-from .fotometria.phot import medir_fotometria, curva_de_luz
+from .fotometria.phot import medir_fotometria
+from .fotometria.curva_de_luz import curva_de_luz
