@@ -29,7 +29,7 @@ def dao_busqueda(imagen, directorio_imagenes_reducidas="imagenes_reducidas", dir
     """
 
     #Determinar el nombre del archivo con las posiciones.
-    pos_fname = re.sub(".fits",".ref_pos.dat",imagen)
+    pos_fname = re.sub(".fits",".pos.dat",imagen)
     try:
         #Si se ha pedido recalcular, avanzar inmediatamente a la excepción.
         if recalcular:
@@ -65,7 +65,7 @@ def dao_busqueda(imagen, directorio_imagenes_reducidas="imagenes_reducidas", dir
     return posiciones
 
 
-def dao_recentrar(imagen, posiciones_referencia, directorio_imagenes_reducidas="imagenes_reducidas", caja_busqueda=21):
+def dao_recentrar(imagen, posiciones_referencia, directorio_imagenes_reducidas="imagenes_reducidas", directorio_fotometria="fot", caja_busqueda=21, recalcular=False):
     """
     Rutina para recentrar un set de posiciones de referencia. Estas posiciones de referencia deben haber sido calculadas con la función dao_busqueda.
 
@@ -81,21 +81,45 @@ def dao_recentrar(imagen, posiciones_referencia, directorio_imagenes_reducidas="
     directorio_imagenes_reducidas: string, opcional
         Nombre del directorio donde se encuentran la imagen en que se hará la búsqueda.
 
+    directorio_fotometria: string, opcional
+        Nombre del directorio donde se guardarán los datos fotométricos.
+
     caja_busqeda: int, opcional
         Tamaño de la caja de búsqueda de las fuentes.
+
+    recalcular: boolean, opcional
+        Debe ser igual a True si se desea recalcular las posiciones.
 
     """
 
     print("Recentrando fuentes en la imagen",imagen)
 
-    #Abrir la image,
-    h = fits.open("{0:s}/{1:s}".format(data_folder, fname))
+    #Nombre donde estarían guardadas las posiciones recentradas.
+    pos_fname = re.sub(".fits",".pos.dat",imagen)
 
-    #Tomar las posiciones de referencia y recentrar las fuentes alrededor de estas posiciones tomando una caja de tamaño caja_busqueda.
-    x_ref = np.copy(pos_ref[:,0])
-    y_ref = np.copy(pos_ref[:,1])
-    x, y = centroid_sources(h[0].data, x_ref, y_ref, box_size=caja_busqeda, centroid_func=centroid_com)
-    h.close()
+    try:
+        #Si se ha pedido recalcular, avanzar inmediatamente a la excepción.
+        if recalcular:
+            raise OSError
+
+        #Tratar de leer el archivo. Si el archivo no existe, se levantará la excepción OSError, que llevará a calcular las posiciones.
+        pos_data = np.loadtxt("{}/{}".format(directorio_fotometria,pos_fname))
+        x = pos_data[:,0]
+        y = pos_data[:,1]
+
+    except OSError:
+
+        #Abrir la image,
+        h = fits.open("{0:s}/{1:s}".format(data_folder, fname))
+
+        #Tomar las posiciones de referencia y recentrar las fuentes alrededor de estas posiciones tomando una caja de tamaño caja_busqueda.
+        x_ref = np.copy(pos_ref[:,0])
+        y_ref = np.copy(pos_ref[:,1])
+        x, y = centroid_sources(h[0].data, x_ref, y_ref, box_size=caja_busqeda, centroid_func=centroid_com)
+        h.close()
+
+        #Guardar las posiciones en el archivo correspondiente.
+        np.savetxt("{}/{}".formar(directorio_fotometria, pos_fname), np.array([x,y]).T)
 
     #Poner las posiciones en un solo arreglo y devolver el arreglo.
     posiciones = np.vstack((x,y)).T

@@ -13,7 +13,7 @@ from photutils import Background2D, SExtractorBackground
 pix_scale = 0.6 # Escala de un pixel en segundos de arco.
 fwhm_pix  = 1./pix_scale #Seeing fue aproximadamente 1".
 
-def medir_fotometria(imagen, posiciones, r_ap, r_an_in=None, r_an_out=None, directorio_imagenes_reducidas=".", directorio_fotometria="fotometria", bkg_type='global', RON=0.0, GAIN=1.0, recalcular=False):
+def medir_fotometria(imagen, r_ap, r_an_in=None, r_an_out=None, directorio_imagenes_reducidas="imagenes_reducidas", directorio_fotometria="fotometria", bkg_type='global', RON=15.0, GAIN=1.33, recalcular=False):
     """
     Rutina para medir fotometría de apertura de las fuentes en una imagen ubicadas en ciertas posiciones.
 
@@ -22,9 +22,6 @@ def medir_fotometria(imagen, posiciones, r_ap, r_an_in=None, r_an_out=None, dire
 
     imagen: str
         Imagen en la que se medirá la fotometría.
-
-    posiciones: numpy array
-        Posiciones en las que se medirá la fotometría. Debe ser generado por las funciones dao_busqueda o dao_recentrar.
 
     r_ap: float
         Radio de la apertura en segundos de arco.
@@ -50,7 +47,7 @@ def medir_fotometria(imagen, posiciones, r_ap, r_an_in=None, r_an_out=None, dire
     """
 
     #Definir el nombre del archivo que guardará la fotometría.
-    phot_fname = re.sub(".fits",".phot.dat",fname)
+    phot_fname = re.sub(".fits",".phot.dat",imagen)
     try:
         #Si se pide recalcular la fotometria, forzar la excepción.
         if recalcular:
@@ -62,6 +59,18 @@ def medir_fotometria(imagen, posiciones, r_ap, r_an_in=None, r_an_out=None, dire
 
     except OSError:
         pass
+
+    #Nombre donde estarían guardadas las posiciones recentradas.
+    pos_fname = re.sub(".fits",".pos.dat",imagen)
+    try:
+        #Tratar de leer el archivo. Si el archivo no existe, se levantará la excepción OSError, que llevará a calcular las posiciones.
+        pos_data = np.loadtxt("{}/{}".format(directorio_fotometria,pos_fname))
+        x = pos_data[:,0]
+        y = pos_data[:,1]
+        posiciones = np.vstack((x,y)).T
+    except OSError:
+        print("Se deben calcular las posiciones primero.")
+        return None, None
 
     #Transformar la apertura y anillo a escala de pixeles y crear las aperturas.
     r_ap_use     = r_ap/pix_scale
