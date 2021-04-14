@@ -7,7 +7,8 @@ def reducir_imagenes_ciencia(imagenes, prefijo="ciencia",
                      nombre_flat="MasterFlat.fits",
                      nombre_dark="MasterDark.fits",
                      nombre_bias="MasterBias.fits",
-                     directorio_imagenes_originales="raw", directorio_imagenes_reducidas="red"):
+                     directorio_imagenes_originales="raw", directorio_imagenes_reducidas="red",
+                     recalcular=False):
     """
     Rutina para reducir las imagenes de ciencia. Esta rutina sustrae el bias y dark, y corrige las diferencias de sensibilidad entre pixeles usando el flat en imagenes tomadas por la camara del telescopio MAS de 50cm en El Sauce.
 
@@ -51,6 +52,17 @@ def reducir_imagenes_ciencia(imagenes, prefijo="ciencia",
 
     #Pasar por cada imagen removiendo bias y dark, corrigiendo por el flat, y removiendo los rayos cósmicos.
     for imagen in imagenes:
+
+        #Tratemos de abrir la imagen. Si no existe, o si se ha pedido recalcularla, proseguir con la combinación.
+        try:
+            if recalcular:
+                raise FileNotFoundError
+            imagen_red = fits.open("{}/{}_{}".format(directorio_imagenes_reducidas, prefijo, imagen))
+            imagen_red.close()
+            continue
+        except FileNotFoundError:
+            pass
+
 
         #Abrir la imagen.
         fname = "{}/{}".format(directorio_imagenes_originales, imagen)

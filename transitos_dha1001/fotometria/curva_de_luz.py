@@ -38,7 +38,7 @@ def curva_de_luz(imagenes, x_fuente, y_fuente, directorio_imagenes_reducidas="im
     for k, imagen in enumerate(imagenes):
 
         #Definir el nombre del archivo que guardará la fotometría.
-        phot_fname = re.sub(".fits",".phot.dat",imagen)
+        phot_fname = re.sub(".fits?",".phot.dat",imagen)
         try:
             #Tratar de leer el archivo con la fotometría. Si no existe, se levantará la excepción OSError y se procederá a hacer el cálculo. Si existe, leer y entregar los valores correspondientes.
             phot_data = np.loadtxt("{}/{}".format(directorio_fotometria, phot_fname))
@@ -50,7 +50,7 @@ def curva_de_luz(imagenes, x_fuente, y_fuente, directorio_imagenes_reducidas="im
             return [None]*3
 
         #Nombre donde estarían guardadas las posiciones recentradas.
-        pos_fname = re.sub(".fits",".pos.dat",imagen)
+        pos_fname = re.sub(".fits?",".pos.dat",imagen)
         try:
             #Tratar de leer el archivo. Si el archivo no existe, se levantará la excepción OSError, que llevará a calcular las posiciones.
             pos_data = np.loadtxt("{}/{}".format(directorio_fotometria,pos_fname))
@@ -64,18 +64,18 @@ def curva_de_luz(imagenes, x_fuente, y_fuente, directorio_imagenes_reducidas="im
 
         #Si es la primera imagen, guardar las magnitudes como referencias.
         if k==0:
-            mag_ref = mag_all
+            mag_ref = np.copy(mag_all)
 
         #Encontrar cual es la fuente que queremos medir.
         d2 = (posiciones[:,0]-x_fuente)**2 + (posiciones[:,1]-y_fuente)**2
         imin = np.argmin(d2)
 
         #Cacular la normalización
-        cond = np.arange(0,len(phot))!=kmin
+        cond = np.arange(0,len(mag_all))!=imin
         norm, norm_median, norm_std = sigma_clipped_stats(mag_ref[cond]-mag_all[cond])
         #print(norm, norm_median, norm_std)
-        target_mag.append(mag_all[kmin]+norm)
-        target_mag_err.append(mag_err_all[kmin])
+        target_mag.append(mag_all[imin]+norm)
+        target_mag_err.append(mag_err_all[imin])
 
         #Guardar el dia Juliano modificado de las observaciones.
         t = Time(h[0].header['DATE-OBS'], format='isot', scale='utc') + 4.0*u.hr

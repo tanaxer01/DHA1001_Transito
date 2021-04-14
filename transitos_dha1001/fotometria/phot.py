@@ -47,7 +47,7 @@ def medir_fotometria(imagen, r_ap, r_an_in=None, r_an_out=None, directorio_image
     """
 
     #Definir el nombre del archivo que guardará la fotometría.
-    phot_fname = re.sub(".fits",".phot.dat",imagen)
+    phot_fname = re.sub(".fits?",".phot.dat",imagen)
     try:
         #Si se pide recalcular la fotometria, forzar la excepción.
         if recalcular:
@@ -61,7 +61,7 @@ def medir_fotometria(imagen, r_ap, r_an_in=None, r_an_out=None, directorio_image
         pass
 
     #Nombre donde estarían guardadas las posiciones recentradas.
-    pos_fname = re.sub(".fits",".pos.dat",imagen)
+    pos_fname = re.sub(".fits?",".pos.dat",imagen)
     try:
         #Tratar de leer el archivo. Si el archivo no existe, se levantará la excepción OSError, que llevará a calcular las posiciones.
         pos_data = np.loadtxt("{}/{}".format(directorio_fotometria,pos_fname))
@@ -90,8 +90,8 @@ def medir_fotometria(imagen, r_ap, r_an_in=None, r_an_out=None, directorio_image
     if bkg_type=='global':
 
         #Si es global, lo primero es calcular la imagen del fondo.
-        bname = re.sub(".fits",".bkg.fits",imagen)
-        bkg = _global_back(h, bname, directorio_imagenes_reducidas)
+        bname = re.sub(".fits?",".bkg.fits",imagen)
+        bkg = _global_back(h, bname, directorio_imagenes_reducidas, recalcular=recalcular)
 
         #Calcular la fotometria de apertura pero en la imagen de fondo ahora.
         bkg_table = aperture_photometry(bkg.background*GAIN, [aps])
@@ -111,22 +111,24 @@ def medir_fotometria(imagen, r_ap, r_an_in=None, r_an_out=None, directorio_image
         error_final = ( phot_table['aperture_sum_0'] + bkg_sig**2 * (aps.area)**2 )**0.5
 
     #Guardar la fotometria.
-    np.savetxt("{}/{}".format(directorio_fotometria, phot_fname), np.array([final_sum, final_error]).T)
+    np.savetxt("{}/{}".format(directorio_fotometria, phot_fname), np.array([suma_final, error_final]).T)
 
     #Retornar la fotometria.
     return suma_final, error_final
 
 
-def _global_back(h, bname, data_folder):
+def _global_back(h, bname, data_folder, recalcular=False):
     sigma_clip = SigmaClip(sigma=3.)
     bkg_estimator = SExtractorBackground()
     bkg = Background2D(h[0].data, (50, 50), filter_size=(3, 3), sigma_clip=sigma_clip, bkg_estimator=bkg_estimator)
     try:
+        if recalcular:
+            raise FileNotFoundError
         bkg_image = fits.open("{0:s}/{1:s}".format(data_folder, bname))
         bkg.background = bkg_image[0].data
     except FileNotFoundError:
         bkg = Background2D(h[0].data, (50, 50), filter_size=(3, 3), sigma_clip=sigma_clip, bkg_estimator=bkg_estimator)
-        fits.writeto(bname, bkg.background)
+        fits.writeto("{0:s}/{1:s}".format(data_folder, bname), bkg.background, overwrite=True)
     return bkg
 
 def _local_back(h, anns, posiciones):
