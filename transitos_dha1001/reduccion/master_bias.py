@@ -4,7 +4,7 @@ import subprocess
 
 
 def crear_masterbias(imagenes, nombre_bias="MasterBias.fits",
-                    directorio_entrada="raw", directorio_salida="red"):
+                    directorio_imagenes_originales="raw", directorio_imagenes_reducidas="red"):
     """
     Rutina para crear el Master Bias. Esta rutina combina las imagenes de bias tomadas por la camara del telescopio MAS de 50cm en El Sauce y genera el cuadro de bias que vamos a usar en la reducción de las otras imágenes.
 
@@ -17,10 +17,10 @@ def crear_masterbias(imagenes, nombre_bias="MasterBias.fits",
     nombre_bias: string, opcional
         Nombre de la imagen de salida que va a tener el cuadro de bias combinado.
 
-    directorio_entrada: string, opcional
+    directorio_imagenes_originales: string, opcional
         Directorio donde están las imágenes tomadas por el telescopio.
 
-    directorio_salida: string, opcional
+    directorio_imagenes_reducidas: string, opcional
         Directorio donde vamos a guardar las imagenes reducidas.
 
     """
@@ -30,7 +30,7 @@ def crear_masterbias(imagenes, nombre_bias="MasterBias.fits",
 
     #Leemos todas las imagenes de bias.
     for imagen in imagenes:
-        fname = "{}/{}".format(directorio_entrada, imagen)
+        fname = "{}/{}".format(directorio_imagenes_originales, imagen)
         h = fits.open(fname)
         all_biases.append(h[0].data)
         h.close()
@@ -39,7 +39,7 @@ def crear_masterbias(imagenes, nombre_bias="MasterBias.fits",
     master_bias = np.median(all_biases, axis=0)
 
     #Guardamos la imagen combinada.
-    subprocess.call(["mkdir",directorio_salida], stderr=subprocess.DEVNULL)
-    fits.writeto("{}/{}".format(directorio_salida, nombre_bias), master_bias, overwrite=True)
+    subprocess.call(["mkdir",directorio_imagenes_reducidas], stderr=subprocess.DEVNULL)
+    fits.writeto("{}/{}".format(directorio_imagenes_reducidas, nombre_bias), master_bias, overwrite=True)
 
     return

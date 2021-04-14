@@ -4,7 +4,7 @@ import subprocess
 
 def crear_masterdark(imagenes, nombre_dark="MasterDark.fits",
                      nombre_bias="MasterBias.fits",
-                     directorio_entrada="raw", directorio_salida="red"):
+                     directorio_imagenes_originales="raw", directorio_imagenes_reducidas="red"):
     """
     Rutina para crear el Master Dark. Esta rutina usa las imagenes de dark, después de sustraer el bias, tomadas por la camara del telescopio MAS de 50cm en El Sauce y genera el cuadro de dark que vamos a usar en la reducción de las otras imágenes.
 
@@ -20,24 +20,24 @@ def crear_masterdark(imagenes, nombre_dark="MasterDark.fits",
     nombre_bias: string, opcional
         Nombre de la imagen que tiene el cuadro de bias combinado.
 
-    directorio_entrada: string, opcional
+    directorio_imagenes_originales: string, opcional
         Directorio donde están las imágenes tomadas por el telescopio.
 
-    directorio_salida: string, opcional
+    directorio_imagenes_reducidas: string, opcional
         Directorio donde vamos a guardar las imagenes reducidas.
 
     """
 
     #Abrir el bias.
     if nombre_bias is not None:
-        master_bias = fits.open("{}/{}".format(directorio_salida,nombre_bias))
+        master_bias = fits.open("{}/{}".format(directorio_imagenes_reducidas,nombre_bias))
 
     #Lista donde vamos a guardar los arrays de todas las imágenes.
     all_darks = []
 
     #Leemos todas las imagenes de darks.
     for imagen in imagenes:
-        fname = "{}/{}".format(directorio_entrada, imagen)
+        fname = "{}/{}".format(directorio_imagenes_originales, imagen)
         h = fits.open(fname)
 
         #Sustraemos el bias.
@@ -52,7 +52,7 @@ def crear_masterdark(imagenes, nombre_dark="MasterDark.fits",
     master_dark = np.median(all_darks, axis=0)
 
     #Guardamos la imagen combinada.
-    subprocess.call(["mkdir",directorio_salida], stderr=subprocess.DEVNULL)
-    fits.writeto("{}/{}".format(directorio_salida, nombre_dark), master_dark, overwrite=True)
+    subprocess.call(["mkdir",directorio_imagenes_reducidas], stderr=subprocess.DEVNULL)
+    fits.writeto("{}/{}".format(directorio_imagenes_reducidas, nombre_dark), master_dark, overwrite=True)
 
     return
