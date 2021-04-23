@@ -130,3 +130,5 @@ dmypy.json
 
 #WASP-43 data
 wasp43*
+
+README.md.vm
