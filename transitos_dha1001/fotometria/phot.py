@@ -13,7 +13,7 @@ from photutils import Background2D, SExtractorBackground
 pix_scale = 0.6 # Escala de un pixel en segundos de arco.
 fwhm_pix  = 1./pix_scale #Seeing fue aproximadamente 1".
 
-def medir_fotometria(imagen, r_ap, r_an_in=None, r_an_out=None, directorio_imagenes_reducidas="imagenes_reducidas", directorio_fotometria="fotometria", bkg_type='global', RON=15.0, GAIN=1.33, recalcular=False):
+def medir_fotometria(imagen, r_ap, r_an_in=None, r_an_out=None, directorio_imagenes_reducidas="imagenes_reducidas", directorio_fotometria="fotometria", bkg_type='global', RON=15.0, GAIN=1.33, recalcular=True):
     """
     Rutina para medir fotometría de apertura de las fuentes en una imagen ubicadas en ciertas posiciones.
 

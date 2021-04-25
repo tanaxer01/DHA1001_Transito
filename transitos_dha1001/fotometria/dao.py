@@ -8,7 +8,7 @@ from photutils import DAOStarFinder, centroid_sources, centroid_com
 
 import subprocess
 
-def dao_busqueda(imagen, directorio_imagenes_reducidas="imagenes_reducidas", directorio_fotometria="fot", recalcular=False):
+def dao_busqueda(imagen, directorio_imagenes_reducidas="imagenes_reducidas", directorio_fotometria="fot", recalcular=True):
     """
     Función que busca fuentes (estrellas) en una imagen.
 

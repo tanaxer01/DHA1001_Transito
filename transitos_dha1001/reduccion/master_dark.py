@@ -5,7 +5,7 @@ import subprocess
 def crear_masterdark(imagenes, nombre_dark="MasterDark.fits",
                      nombre_bias="MasterBias.fits",
                      directorio_imagenes_originales="raw", directorio_imagenes_reducidas="red",
-                     recalcular=False):
+                     recalcular=True):
     """
     Rutina para crear el Master Dark. Esta rutina usa las imagenes de dark, después de sustraer el bias, tomadas por la camara del telescopio MAS de 50cm en El Sauce y genera el cuadro de dark que vamos a usar en la reducción de las otras imágenes.
 

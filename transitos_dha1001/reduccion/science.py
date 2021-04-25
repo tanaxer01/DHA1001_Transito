@@ -8,7 +8,7 @@ def reducir_imagenes_ciencia(imagenes, prefijo="ciencia",
                      nombre_dark="MasterDark.fits",
                      nombre_bias="MasterBias.fits",
                      directorio_imagenes_originales="raw", directorio_imagenes_reducidas="red",
-                     recalcular=False):
+                     recalcular=True):
     """
     Rutina para reducir las imagenes de ciencia. Esta rutina sustrae el bias y dark, y corrige las diferencias de sensibilidad entre pixeles usando el flat en imagenes tomadas por la camara del telescopio MAS de 50cm en El Sauce.
 
