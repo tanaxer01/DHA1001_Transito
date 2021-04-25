@@ -5,7 +5,8 @@ from .reduccion.master_bias import crear_masterbias
 from .reduccion.master_dark import crear_masterdark
 from .reduccion.master_flat import crear_masterflat
 from .reduccion.science import reducir_imagenes_ciencia
+from .reduccion.desplegar_imagenes import desplegar_imagen
 
 from .fotometria.dao import dao_busqueda, dao_recentrar
 from .fotometria.phot import medir_fotometria
-from .fotometria.curva_de_luz import curva_de_luz
+from .fotometria.curva_de_luz import curva_de_luz, graficar_curva_de_luz

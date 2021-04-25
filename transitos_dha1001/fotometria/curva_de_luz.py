@@ -1,5 +1,6 @@
 import numpy as np
 import re
+import matplotlib.pyplot as plt
 
 import astropy.units as u
 from astropy.time import Time
@@ -82,3 +83,28 @@ def curva_de_luz(imagenes, x_fuente, y_fuente, directorio_imagenes_reducidas="im
         mjd.append(t.mjd)
 
     return mjd, target_mag, target_mag_err
+
+###
+
+def graficar_curva_de_luz(mjd, mag, mag_err, titulo=None):
+
+    #Crear figura.
+    fig = plt.figure(figsize=(10,6))
+    ax = fig.add_subplot(1, 1, 1)
+
+    #Graficar datos.
+    ax.errorbar((mjd-mjd[0])*24., mag, yerr=mag_err, fmt='bo')
+
+    #Invertir el eje y para que los puntos más brillantes este más arriba.
+    ymin, ymax = plt.ylim()
+    ax.set_ylim([ymax, ymin])
+
+    #Desplegar titulos si fue indicado.
+    if titulo is not None:
+        ax.set_title(titulo, fontsize=14)
+
+    #Poner nombres de los ejes.
+    ax.set_xlabel("MJD - {0:.3f} (hours)".format(mjd[0]), fontsize=14)
+    ax.set_ylabel("Magnitud Instrumental", fontsize=14)
+
+    return
