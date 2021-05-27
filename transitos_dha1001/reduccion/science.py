@@ -39,6 +39,9 @@ def reducir_imagenes_ciencia(imagenes, prefijo="ciencia",
     directorio_imagenes_reducidas: string, opcional
         Directorio donde vamos a guardar las imagenes reducidas.
 
+    recalcular: bool, opcional
+        Si es True, se reducirá la imagen aún cuando una versión de la imagen reducida ya exista en el directorio de imagenes reducidas. 
+
     """
 
     #Abrir el master dark y el master bias.
