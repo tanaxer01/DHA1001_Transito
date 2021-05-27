@@ -32,6 +32,9 @@ def alinear_imagenes_ciencia(imagenes,
     #La primera imagen será utilizada como la referencia, y el resto se va a linear para calzar con esta.
     referencia = fits.open("{}/{}".format(directorio_imagenes_reducidas, imagenes[0]))
 
+    #Para evitar un error de compatibilidad de pyfits con las nuevas versiones de astroalign, necesitamos asegurarnos que el arreglo de la imagen sea de tipo float64.
+    referencia[0].data = np.float64(referencia[0].data)
+
     #Pasar por cada imagen alineandola a la de referencia. Si no se pide recalcular, y la imagen ya existe, saltarse el alineamiento.
     for imagen in imagenes:
 
@@ -42,6 +45,7 @@ def alinear_imagenes_ciencia(imagenes,
 
         #Alinear la imagen.
         im = fits.open("{}/{}".format(directorio_imagenes_reducidas, imagen))
+        im[0].data = np.float64(im[0].data)
         im_alineada, footprint = aa.register(im[0].data, referencia[0].data)
 
         #Guardar la imagen alineada.
