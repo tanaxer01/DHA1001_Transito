@@ -182,7 +182,7 @@ def filtrar_posiciones(imagen, zonas_a_filtrar,
             cond = (d>r_bad[k])
         else:
             cond = cond & (d>r_bad[k])
-        posiciones_referencia = posiciones_referencia[cond]
+    posiciones_referencia = posiciones_referencia[cond]
 
     #Guardar las posiciones filtradas.
     np.savetxt("{}/{}".format(directorio_fotometria, archivo_posiciones), posiciones_referencia)
