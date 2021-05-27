@@ -1,6 +1,6 @@
 import numpy as np
 import astroalign as aa
-from astrop.io import fits
+from astropy.io import fits
 import os
 import re
 
@@ -25,7 +25,7 @@ def alinear_imagenes_ciencia(imagenes,
         Directorio donde vamos a guardar las imagenes reducidas.
 
     recalcular: bool, opcional
-        Si es True, se recalculará el alineamiento aún cuando una versión de la imagen alineada ya exista en el directorio de imagenes reducidas. 
+        Si es True, se recalculará el alineamiento aún cuando una versión de la imagen alineada ya exista en el directorio de imagenes reducidas.
 
     """
 
