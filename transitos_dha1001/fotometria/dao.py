@@ -74,7 +74,7 @@ def dao_busqueda(imagen, directorio_imagenes_reducidas="imagenes_reducidas", dir
     return posiciones
 
 
-def dao_recentrar(imagen, posiciones_referencia, directorio_imagenes_reducidas="imagenes_reducidas", directorio_fotometria="fot", caja_busqueda=21, recalcular=False):
+def dao_recentrar(imagen, posiciones_referencia, directorio_imagenes_reducidas="imagenes_reducidas", directorio_fotometria="fot", caja_busqueda=21, recalcular=True):
     """
     Rutina para recentrar un set de posiciones de referencia. Estas posiciones de referencia deben haber sido calculadas con la función dao_busqueda.
 
@@ -133,3 +133,58 @@ def dao_recentrar(imagen, posiciones_referencia, directorio_imagenes_reducidas="
     #Poner las posiciones en un solo arreglo y devolver el arreglo.
     posiciones = np.vstack((x,y)).T
     return posiciones
+
+def filtrar_posiciones(imagen, zonas_a_filtrar,
+                       radio_de_filtro=10,
+                       directorio_fotometria="fot"):
+
+    """
+    Rutina par filtrar fuentes en zonas problematicas de la imagen de referencia usando sus coordenadas.
+
+    Parametros
+    ----------
+
+    imagen: str
+        Imagen que se usará como referencia para las posiciones.
+
+    zonas_a_filtrar: lista de dos dimensiones, float
+        Posiciones alrededor de las cuales se quieren eliminar fuentes detectadas.
+
+    radio_de_filtro: float o lista, opcional
+        Radio, en pixeles, de la zona de eliminación alrededor de las zonas_a_filtrar. Si es un escalar, se usará el mismo valor para todas las zonas. Si es una lista, debe ser del mismo largo que las zonas_a_filtrar. Valor predeterminado es 10 pixeles.
+
+    directorio_fotometria: str, opcional
+        Directorio donde se guardan los archivos relacionados a la fotometría.
+
+    """
+
+    #Partir por leer las posiciones.
+    archivo_posiciones = re.sub(".fits?", ".pos.dat", imagen)
+    posiciones_referencia = np.loadtxt("{}/{}".format(directorio_fotometria, archivo_posiciones))
+
+    #Poner las posiciones a filtrar en formato de arreglos de numpy.
+    zonas_a_filtrar = np.array(zonas_a_filtrar)
+    x_bad = zonas_a_filtrar[:,0]
+    y_bad = zonas_a_filtrar[:,1]
+
+    #El radio de eliminación puede ser distinto para cada zona de eliminación o la misma para todas.
+    if np.isscalar(radio_de_filtro):
+        r_bad = radio_de_filtro * np.ones(len(x_bad))
+    else:
+        r_bad = np.array(radio_de_filtro)
+
+    #Pasar por todas las zonas a filtrar, y crear una condición para luego filtrar el arreglo.
+    for k in range(len(x_bad)):
+        dx = (posiciones_referencia[:,0]-x_bad[k])
+        dy = (posiciones_referencia[:,1]-y_bad[k])
+        d  = (dx**2+dy**2)**0.5
+        if k==0:
+            cond = (d>r_bad[k])
+        else:
+            cond = cond & (d>r_bad[k])
+        posiciones_referencia = posiciones_referencia[cond]
+
+    #Guardar las posiciones filtradas.
+    np.savetxt("{}/{}".format(directorio_fotometria, archivo_posiciones), posiciones_referencia)
+
+    return
