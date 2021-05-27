@@ -187,4 +187,4 @@ def filtrar_posiciones(imagen, zonas_a_filtrar,
     #Guardar las posiciones filtradas.
     np.savetxt("{}/{}".format(directorio_fotometria, archivo_posiciones), posiciones_referencia)
 
-    return
+    return posiciones_referencia
