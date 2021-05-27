@@ -33,7 +33,7 @@ def alinear_imagenes_ciencia(imagenes,
     referencia = fits.open("{}/{}".format(directorio_imagenes_reducidas, imagenes[0]))
 
     #Pasar por cada imagen alineandola a la de referencia. Si no se pide recalcular, y la imagen ya existe, saltarse el alineamiento.
-    for imagen in imagenes_reducidas_ciencia:
+    for imagen in imagenes:
 
         #Ver si la imagen alineada ya existe.
         imagen_salida = prefijo + "_" + imagen
