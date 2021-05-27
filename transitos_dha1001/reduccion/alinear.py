@@ -48,3 +48,5 @@ def alinear_imagenes_ciencia(imagenes,
         im[0].data = im_alineada
         im.writeto("{}/{}".format(directorio_imagenes_reducidas, imagen_salida))
         im.close()
+
+    return
