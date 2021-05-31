@@ -80,6 +80,10 @@ def crear_masterflat(imagenes, nombre_flat="MasterFlat.fits",
     flat_promedio, flat_mediana, flat_dispersion = sigma_clipped_stats(all_flats, axis=0)
     master_flat = flat_mediana
 
+    #Finalmente, si hay algun pixel con flujo 0 o negativo (lo que es solo debido a fluctuaciones estadísticas), lo vamos a reemplazar por el menor valor positivo en la imagen. Esto no tiene un impacto medible, pues deberían ser muy poco pixeles, pero evita errores en los cálculos.
+    min_val = np.min(master_flat[master_flat>0])
+    master_flat[master_flat<=0] = min_val
+
     #Guardamos el flat.
     fits.writeto("{}/{}".format(directorio_imagenes_reducidas, nombre_flat), master_flat, overwrite=True)
 
