@@ -128,7 +128,8 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-#WASP-43 data
-wasp43*
+#WASP-103 data
+data
+wasp103*
 
 README.md.vm
