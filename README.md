@@ -1,6 +1,6 @@
-# Rutinas para el Análisis de Tránsitos para el curso DHA1001 *Sistema Solar y la Búsqueda de Otros Mundos*.
+# Calculo del radio del exoplaneta wasp-103b
 
-Este repositorio tiene todas las herramientas que usted necesitará para analizar las imágenes tomadas con el telescopio MAS500, tanto para llevar a cabo el proyecto, como para ejecutar todos los pasos del ejemplo proveído basado en observaciones de la estrella WASP-43 durante el tránsito de su planeta WASP-43b.
-
-En el portal de Canvas del curso usted podrá encontrar todas las instrucciones necesarias para instalar estas rutinas, obtener los datos de WASP-43, y llevar a cabo el proyecto. 
+Dentro del archivo _Ifnorme.ipynb_ se encuentra el análisis hecho de los datos
+capturados de un tránsito del exoplaneta wasp-103b sobre su estrella y los calculos
+hechos para poder obtener su radio.
 
